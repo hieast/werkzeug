@@ -1235,10 +1235,9 @@ class Map(object):
            `query_args` can now also be a string.
         """
         server_name = server_name.lower()
-        if self.host_matching:
-            if subdomain is not None:
-                raise RuntimeError('host matching enabled and a '
-                                   'subdomain was provided')
+        if self.host_matching and subdomain is not None:
+            raise RuntimeError('host matching enabled and a '
+                               'subdomain was provided')
         elif subdomain is None:
             subdomain = self.default_subdomain
         if script_name is None:
@@ -1344,9 +1343,6 @@ class Map(object):
             return
 
         with self._remap_lock:
-            if not self._remap:
-                return
-
             self._rules.sort(key=lambda x: x.match_compare_key())
             for rules in itervalues(self._rules_by_endpoint):
                 rules.sort(key=lambda x: x.build_compare_key())
